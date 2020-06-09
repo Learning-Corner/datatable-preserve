@@ -10,17 +10,46 @@
           href="../static/favicon.ico"
           th:href="@{../favicon.ico}">
 
-    <!-- Data Tables, jQuery -->
     <link rel="stylesheet"
           type="text/css"
-          href="../static/datatables.css"
-          th:href="@{../datatables.css}" />
+          href="../static/css/jquery-ui.css"
+          th:href="@{../css/jquery-ui.css}" />
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/dataTables.jqueryui.css"
+          th:href="@{../css/dataTables.jqueryui.css}" />
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/buttons.jqueryui.css"
+          th:href="@{../css/buttons.jqueryui.css}" />
+
     <script type="text/javascript"
-            src="../static/jQuery-3.3.1/jquery-3.3.1.js"
-            th:src="@{../jQuery-3.3.1/jquery-3.3.1.js}"></script>
+            src="../static/js/jquery-3.5.1.js"
+            th:src="@{../js/jquery-3.5.1.js}"></script>
     <script type="text/javascript"
-            src="../static/datatables.js"
-            th:src="@{../datatables.js}"></script>
+            src="../static/js/jquery.dataTables.js"
+            th:src="@{../js/jquery.dataTables.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/dataTables.jqueryui.js"
+            th:src="@{../js/dataTables.jqueryui.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/dataTables.buttons.js"
+            th:src="@{../js/dataTables.buttons.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/buttons.jqueryui.js"
+            th:src="@{../js/buttons.jqueryui.js}"></script>
+    <!-- skipped: jszip  -->
+    <!-- skipped: pdfmake  -->
+    <script type="text/javascript"
+            src="../static/js/vfs_fonts.js"
+            th:src="@{../js/vfs_fonts.js}"></script>
+    <!-- skipped: print -->
+    <script type="text/javascript"
+            src="../static/js/buttons.html5.js"
+            th:src="@{../js/buttons.html5.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/buttons.colVis.js"
+            th:src="@{../js/buttons.colVis.js}"></script>
 
     <title>DataTable Settings Preserver</title>
     <style>
@@ -29,7 +58,7 @@
         }
 
         body {
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+            font-family: Arial, Helvetica, sans-serif
         }
 
         h1,
@@ -43,6 +72,65 @@
 
 <body>
     <h1>Welcome to The DataTable Settings Preserver</h1>
+
+    <table id="myDataTable"
+           class="display"
+           style="width:100%">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Surname</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Date of Birth</th>
+                <th scope="col">Personal Number</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </body>
+
+<script>
+    $(document).ready(function () {
+        const table = $('#myDataTable').DataTable({
+            "processing": true,
+            "ajax": {
+                url: "../api/users",
+                dataSrc: function (json) {
+                    for (var i = 0, ien = json.data.length; i < ien; i++) {
+                        json.data[i][0] = '<a href="/message/' + json.data[i][0] + '>View message</a>';
+                    }
+                    return json.data;
+                },
+                dataFilter: function (data) {
+                    let json = {};
+                    json.data = jQuery.parseJSON(data);
+                    json.draw = 1;
+                    json.recordsTotal = json.data.length;
+                    json.recordsFiltered = json.data.length;
+                    result = JSON.stringify(json); // return JSON string
+                    return result;
+                }
+            },
+            columns: [
+                { "data": "id" },
+                { "data": "name" },
+                { "data": "surname" },
+                { "data": "email" },
+                { "data": "dateOfBirth" },
+                { "data": "personalNumber" }
+            ],
+            colReorder: true,
+            dom: 'Bfrtip',
+            buttons: [
+                'colvis',
+            ]
+        });
+
+        table.buttons().container()
+            .insertBefore('#myDataTable_filter');
+    });
+</script>
 
 </html>
