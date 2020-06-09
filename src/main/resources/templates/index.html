@@ -40,12 +40,6 @@
             src="../static/js/dataTables.buttons.js"
             th:src="@{../js/dataTables.buttons.js}"></script>
     <script type="text/javascript"
-            src="../static/js/vfs_fonts.js"
-            th:src="@{../js/vfs_fonts.js}"></script>
-    <script type="text/javascript"
-            src="../static/js/buttons.html5.js"
-            th:src="@{../js/buttons.html5.js}"></script>
-    <script type="text/javascript"
             src="../static/js/buttons.colVis.js"
             th:src="@{../js/buttons.colVis.js}"></script>
     <script type="text/javascript"
@@ -70,13 +64,6 @@
         h2,
         h3 {
             text-align: center;
-        }
-
-        /* myDataTable styling */
-        #myDataTable thead {
-            border-bottom: 1px solid #111;
-            margin-top: .5rem;
-            margin-bottom: .5rem;
         }
 
     </style>
@@ -146,7 +133,7 @@
             colReorder: {
                 enable: true
             },
-            dom: 'Bfrtip',
+            dom: '<"top"fl>Brt<"bottom"ip><"clear">',
             buttons: [
                 'colvis',
             ]
@@ -154,7 +141,17 @@
 
         table.buttons().container()
             .insertBefore('#myDataTable_filter');
+
+        /* DataTable styling */
+        $('div.dt-buttons').css({ "float": "none", "margin-bottom": "5px" });
+        $('div.dt-buttons button').css({ "padding": "1px 5px" });
+
+        table.on('draw', function () {
+            $('div.dataTables_paginate a.paginate_button').css({ "padding": "5px 10px" });
+        });
     });
+
+
 </script>
 
 </html>
