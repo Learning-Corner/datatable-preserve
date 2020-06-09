@@ -7,6 +7,6 @@ CREATE TABLE `users` (
   `email` varchar(255) default NULL,
   `date_of_birth` datetime,
   `personal_number` varchar(13) default NULL,
-  `settings_preserved` boolean default false,
+  `settings_persisted` boolean default false,
   PRIMARY KEY (`id`)
 );

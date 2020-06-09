@@ -37,19 +37,21 @@ public class User {
     @Column(name = "personal_number")
     private String personalNumber;
 
-    @Column(name = "settings_preserved")
-    private boolean settingsPreserved;
+    @Column(name = "settings_persisted")
+    private boolean settingsPersisted;
 
     public User() {
     }
 
     @Builder
-    public User(Integer id, String name, String surname, String email, Date dateOfBirth, String personalNumber) {
+    public User(Integer id, String name, String surname, String email, Date dateOfBirth, String personalNumber,
+                boolean settingsPersisted) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.personalNumber = personalNumber;
+        this.settingsPersisted = settingsPersisted;
     }
 }
