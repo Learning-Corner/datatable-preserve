@@ -11,16 +11,16 @@
 
     <link rel="stylesheet"
           type="text/css"
-          href="../static/css/jquery-ui.css"
-          th:href="@{../css/jquery-ui.css}" />
+          href="../static/css/datatables.css"
+          th:href="@{../css/datatables.css}" />
     <link rel="stylesheet"
           type="text/css"
-          href="../static/css/dataTables.jqueryui.css"
-          th:href="@{../css/dataTables.jqueryui.css}" />
+          href="../static/css/jquery.dataTables.css"
+          th:href="@{../css/jquery.dataTables.css}" />
     <link rel="stylesheet"
           type="text/css"
-          href="../static/css/buttons.jqueryui.css"
-          th:href="@{../css/buttons.jqueryui.css}" />
+          href="../static/css/colReorder.dataTables.css"
+          th:href="@{../css/colReorder.dataTables.css}" />
 
     <script type="text/javascript"
             src="../static/js/jquery-3.5.1.js"
@@ -29,33 +29,28 @@
             src="../static/js/jquery.dataTables.js"
             th:src="@{../js/jquery.dataTables.js}"></script>
     <script type="text/javascript"
-            src="../static/js/dataTables.jqueryui.js"
-            th:src="@{../js/dataTables.jqueryui.js}"></script>
-    <script type="text/javascript"
             src="../static/js/dataTables.buttons.js"
             th:src="@{../js/dataTables.buttons.js}"></script>
     <script type="text/javascript"
-            src="../static/js/buttons.jqueryui.js"
-            th:src="@{../js/buttons.jqueryui.js}"></script>
-    <!-- skipped: jszip  -->
-    <!-- skipped: pdfmake  -->
-    <script type="text/javascript"
             src="../static/js/vfs_fonts.js"
             th:src="@{../js/vfs_fonts.js}"></script>
-    <!-- skipped: print -->
     <script type="text/javascript"
             src="../static/js/buttons.html5.js"
             th:src="@{../js/buttons.html5.js}"></script>
     <script type="text/javascript"
             src="../static/js/buttons.colVis.js"
             th:src="@{../js/buttons.colVis.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/dataTables.colReorder.js"
+            th:src="@{../js/dataTables.colReorder.js}"></script>
 
     <title>DataTable Settings Preserver</title>
     <style>
+        /*
         * {
             box-sizing: border-box;
         }
-
+        */
         body {
             font-family: Arial, Helvetica, sans-serif
         }
@@ -64,6 +59,13 @@
         h2,
         h3 {
             text-align: center;
+        }
+
+        /* myDataTable styling */
+        #myDataTable thead {
+            border-bottom: 1px solid #111;
+            margin-top: .5rem;
+            margin-bottom: .5rem;
         }
 
     </style>
@@ -87,6 +89,16 @@
         </thead>
         <tbody>
         </tbody>
+        <tfoot>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Surname</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Date of Birth</th>
+                <th scope="col">Personal Number</th>
+            </tr>
+        </tfoot>
     </table>
 </body>
 
@@ -120,8 +132,10 @@
                 { "data": "dateOfBirth" },
                 { "data": "personalNumber" }
             ],
-            colReorder: true,
-            dom: 'Bfrtip',
+            colReorder: {
+                enable: true
+            },
+            'dom': 'Rlfrtip',
             buttons: [
                 'colvis',
             ]
