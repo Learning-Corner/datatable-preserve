@@ -21,6 +21,14 @@
           type="text/css"
           href="../static/css/colReorder.dataTables.css"
           th:href="@{../css/colReorder.dataTables.css}" />
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/buttons.dataTables.css"
+          th:href="@{../css/buttons.dataTables.css}" />
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/searchPanes.dataTables.css"
+          th:href="@{../css/searchPanes.dataTables.css}" />
 
     <script type="text/javascript"
             src="../static/js/jquery-3.5.1.js"
@@ -43,6 +51,9 @@
     <script type="text/javascript"
             src="../static/js/dataTables.colReorder.js"
             th:src="@{../js/dataTables.colReorder.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/searchPanes.dataTables.js"
+            th:src="@{../js/searchPanes.dataTables.js}"></script>
 
     <title>DataTable Settings Preserver</title>
     <style>
@@ -135,7 +146,7 @@
             colReorder: {
                 enable: true
             },
-            'dom': 'Rlfrtip',
+            dom: 'Bfrtip',
             buttons: [
                 'colvis',
             ]
