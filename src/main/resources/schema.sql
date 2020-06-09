@@ -13,7 +13,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `settings` (
+CREATE TABLE `user_settings` (
     `user_id` mediumint(8) unsigned NOT NULL,
     `settings` CLOB NOT NULL,
     PRIMARY KEY (`user_id`),

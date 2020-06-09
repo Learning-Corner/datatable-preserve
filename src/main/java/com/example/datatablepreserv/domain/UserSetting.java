@@ -17,6 +17,9 @@ import javax.persistence.*;
 @Builder
 public class UserSetting {
 
+    public UserSetting() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
