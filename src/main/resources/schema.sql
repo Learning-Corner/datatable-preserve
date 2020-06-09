@@ -14,8 +14,7 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `user_settings` (
-    `user_id` mediumint(8) unsigned NOT NULL,
+    `key` varchar(25) NOT NULL,
     `settings` CLOB NOT NULL,
-    PRIMARY KEY (`user_id`),
-    FOREIGN KEY (`user_id`) REFERENCES users(`id`)
+    PRIMARY KEY (`key`)
 );

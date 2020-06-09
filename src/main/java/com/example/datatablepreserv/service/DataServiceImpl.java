@@ -30,13 +30,8 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public UserSetting getSettingsOfUser(User user) {
-        return this.getSettingsOfUserByUserId(user.getId());
-    }
-
-    @Override
-    public UserSetting getSettingsOfUserByUserId(Integer userId) {
-        return userSettingsRepository.findById(userId).orElse(null);
+    public UserSetting getSettingsOfUserByKey(String key) {
+        return userSettingsRepository.findById(key).orElse(null);
     }
 
     @Override

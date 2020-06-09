@@ -1,6 +1,6 @@
-INSERT INTO users (name,surname,email,date_of_birth,personal_number) VALUES ('Leila','Stephens','dignissim@esttemporbibendum.net','2019-08-18 07:11:42','119-41-0519');
-INSERT INTO USER_SETTINGS VALUES(1, '{"name":"column_order", "value":"7,8,1,2,3,4"}');
+INSERT INTO USER_SETTINGS VALUES('default', '{}');
 
+INSERT INTO users (name,surname,email,date_of_birth,personal_number) VALUES ('Leila','Stephens','dignissim@esttemporbibendum.net','2019-08-18 07:11:42','119-41-0519');
 INSERT INTO users (name,surname,email,date_of_birth,personal_number) VALUES ('Oscar','Solis','mollis@nullaIntincidunt.net','2020-05-30 11:38:02','275-24-0472');
 INSERT INTO users (name,surname,email,date_of_birth,personal_number) VALUES ('Colby','Lee','neque.vitae@euerosNam.co.uk','2019-07-21 05:26:46','175-06-0817');
 INSERT INTO users (name,surname,email,date_of_birth,personal_number) VALUES ('Alice','Hull','Donec@at.net','2020-03-16 02:16:43','680-92-0927');

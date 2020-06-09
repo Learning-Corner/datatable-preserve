@@ -19,18 +19,11 @@ public interface DataService {
     User saveUser(User user);
 
     /**
-     * Returns settings of given user
-     * @param user the user which data setting should be returned
-     * @return user's settings
+     * Return's settings of given key
+     * @param key identifier of the setting
+     * @return user settings of given key
      */
-    UserSetting getSettingsOfUser(User user);
-
-    /**
-     * Return's settings of user for given user id
-     * @param userId user's identifier, of which user's setting to be returned
-     * @return user's settings for given user's id
-     */
-    UserSetting getSettingsOfUserByUserId(Integer userId);
+    UserSetting getSettingsOfUserByKey(String key);
 
     /**
      * Persists user's settings

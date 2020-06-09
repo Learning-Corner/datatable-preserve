@@ -20,15 +20,15 @@ public class UserSetting {
     public UserSetting() {
     }
 
-    public UserSetting(Integer userId, String settings) {
-        this.userId = userId;
+    public UserSetting(String key, String settings) {
+        this.key = key;
         this.settings = settings;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
-    private Integer userId;
+    @Column(name = "key")
+    private String key;
 
     @Column(name = "settings")
     @Lob

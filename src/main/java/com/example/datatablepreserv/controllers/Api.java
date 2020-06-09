@@ -30,10 +30,10 @@ public class Api {
         return this.dataService.saveUser(user);
     }
 
-    @RequestMapping("settings/{id}")
+    @RequestMapping("settings/{key}")
     @ResponseBody
-    UserSetting getSettingsOfUserByUserId(@PathVariable Integer id) {
-        return this.dataService.getSettingsOfUserByUserId(id);
+    UserSetting getSettingsOfUserByUserId(@PathVariable String key) {
+        return this.dataService.getSettingsOfUserByKey(key);
     }
 
     @PostMapping("setting")
