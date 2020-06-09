@@ -20,6 +20,11 @@ public class UserSetting {
     public UserSetting() {
     }
 
+    public UserSetting(Integer userId, String settings) {
+        this.userId = userId;
+        this.settings = settings;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
