@@ -53,6 +53,7 @@
             th:src="@{../js/knockout.js}"></script>
 
     <title>DataTable Settings Preserver</title>
+
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif
@@ -155,67 +156,12 @@
 </body>
 
 <script>
+    /* setting datalist view-data model */
     const vm = {
         settings: ko.observableArray([]),
         selectedKey: ko.observable(),
         ivalue: ko.observable()
     };
-
-    $(document).ready(function () {
-        const table = $('#myDataTable').DataTable({
-            "processing": true,
-            "ajax": {
-                url: "../api/users",
-                dataSrc: function (json) {
-                    for (var i = 0, ien = json.data.length; i < ien; i++) {
-                        json.data[i][0] = '<a href="/message/' + json.data[i][0] + '>View message</a>';
-                    }
-                    return json.data;
-                },
-                dataFilter: function (data) {
-                    let json = {};
-                    json.data = jQuery.parseJSON(data);
-                    json.draw = 1;
-                    json.recordsTotal = json.data.length;
-                    json.recordsFiltered = json.data.length;
-                    result = JSON.stringify(json); // return JSON string
-                    return result;
-                }
-            },
-            columns: [
-                { "data": "id" },
-                { "data": "name" },
-                { "data": "surname" },
-                { "data": "email" },
-                { "data": "dateOfBirth" },
-                { "data": "personalNumber" }
-            ],
-            colReorder: {
-                enable: true
-            },
-            dom: 'B<"clear"><"top"fl>rt<"bottom"ip><"clear">',
-            buttons: [
-                'colvis',
-            ]
-        });
-
-        /* DataTable styling */
-        $('div.dt-buttons').css({ "margin-bottom": "5px" });
-        $('div.dt-buttons button').css({ "padding": "1px 5px" });
-        table.on('draw', function () {
-            $('div.dataTables_paginate a.paginate_button').css({ "padding": "5px 10px" });
-        });
-
-        /* Query for settings */
-        $.ajax({
-            url: "api/settings", success: function (result) {
-                vm.settings(result);
-            }
-        });
-
-        /* apply knockout bindings */
-        ko.applyBindings(vm);
-    });
 
     function getTableSettings() {
         let table = $('#myDataTable').DataTable();
@@ -338,6 +284,64 @@
             }
         };
     })();
+
+    /* initilization when document is ready */
+    $(document).ready(function () {
+        const table = $('#myDataTable').DataTable({
+            "processing": true,
+            "ajax": {
+                url: "../api/users",
+                dataSrc: function (json) {
+                    for (var i = 0, ien = json.data.length; i < ien; i++) {
+                        json.data[i][0] = '<a href="/message/' + json.data[i][0] + '>View message</a>';
+                    }
+                    return json.data;
+                },
+                dataFilter: function (data) {
+                    let json = {};
+                    json.data = jQuery.parseJSON(data);
+                    json.draw = 1;
+                    json.recordsTotal = json.data.length;
+                    json.recordsFiltered = json.data.length;
+                    result = JSON.stringify(json); // return JSON string
+                    return result;
+                }
+            },
+            columns: [
+                { "data": "id" },
+                { "data": "name" },
+                { "data": "surname" },
+                { "data": "email" },
+                { "data": "dateOfBirth" },
+                { "data": "personalNumber" }
+            ],
+            colReorder: {
+                enable: true
+            },
+            dom: 'B<"clear"><"top"fl>rt<"bottom"ip><"clear">',
+            buttons: [
+                'colvis',
+            ]
+        });
+
+        /* DataTable styling */
+        $('div.dt-buttons').css({ "margin-bottom": "5px" });
+        $('div.dt-buttons button').css({ "padding": "1px 5px" });
+        table.on('draw', function () {
+            $('div.dataTables_paginate a.paginate_button').css({ "padding": "5px 10px" });
+        });
+
+        /* Query for settings */
+        $.ajax({
+            url: "api/settings", success: function (result) {
+                vm.settings(result);
+            }
+        });
+
+        /* apply knockout bindings */
+        ko.applyBindings(vm);
+    });
+
 </script>
 
 </html>
