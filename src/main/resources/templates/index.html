@@ -156,57 +156,113 @@
 </body>
 
 <script>
-    /* setting datalist view-data model */
+
+    /* Setting datalist view-data model */
     const vm = {
         settings: ko.observableArray([]),
         selectedKey: ko.observable(),
         ivalue: ko.observable()
     };
 
-    function getTableSettings() {
-        let table = $('#myDataTable').DataTable();
-        if (table) {
-            let settings = {
-                page: table.page(),
-                order: table.order(),
-                columns: table.columns()[0].map(c => { return { index: c, visible: table.columns(c).visible()[0] } }),
-                columnsOrder: table.colReorder.order(),
-                search: table.search()
-            }
-            return settings;
+    class UserSettingManager {
+
+        constructor(tableId) {
+            this.tableId = tableId;
+            // initialize setting html controls
+            this.init();
         }
-    }
 
-    /* ==============================================*/
-    /* Settings' input initialization event listener */
-    $('#settings button').attr('disabled', true);
-    const settingsInput = document.querySelector('#settings input');
-    settingsInput.addEventListener('input', onSettingsUpdateValue);
-    function onSettingsUpdateValue(event) {
-        $('#settings button.btn-save').attr('disabled', event.target.value.length === 0);
-        $('#settings button.btn-restore').attr('disabled', -1 === vm.settings().findIndex(setting => setting.key === event.target.value));
-    }
+        // Returns datatable and initialize this.dataTable variable if not been set
+        getTable() {
+            if (!this.dataTable) {
+                this.dataTable = $(this.tableId).DataTable();
+            }
+            return this.dataTable;
+        }
 
-    /* ==============================================*/
-    /* Settings buttons' event listeners */
-    btnSave = document.querySelector('#settings button.button.btn-save');
-    btnSave.addEventListener('click', onSettingsSave);
-    /* saving settings */
-    function onSettingsSave() {
-        const settings = {
-            key: vm.ivalue(),
-            settings: getTableSettings()
-        };
-        console.log(`Saving settings:`, settings);
-    }
-    /* restoring settings */
-    btnRestore = document.querySelector('#settings button.button.btn-restore');
-    btnRestore.addEventListener('click', onSettingsRestore);
-    function onSettingsRestore() {
-        console.log(`Restoring settings: key="${vm.ivalue()}"`);
-    }
+        // Returns table settings object
+        getTableSettings() {
+            if (this.dataTable || this.getTable()) {
+                let settings = {
+                    page: this.dataTable.page(),
+                    order: this.dataTable.order(),
+                    columns: this.dataTable.columns()[0].map(c => { return { index: c, visible: this.dataTable.columns(c).visible()[0] } }),
+                    columnsOrder: this.dataTable.colReorder.order(),
+                    search: this.dataTable.search()
+                }
+                return settings;
+            }
+        }
 
-    /* datalist binding handler */
+        //
+        /* Query for settings */
+        querySettings() {
+            $.ajax({
+                url: "api/settings", success: function (result) {
+                    vm.settings(result);
+                }
+            });
+        }
+
+        // Restores setting data; this method is bound to the settings restore button
+        settingRestore() {
+            console.log(`Restoring settings: key="${vm.ivalue()}"`);
+        }
+
+        // Stores setting data (ajax post to the server); this method is bound to the settings' save button
+        settingSave() {
+            const settings = {
+                key: vm.ivalue(),
+                settings: this.getTableSettings()
+            };
+            console.log(`Saving settings:`, settings);
+            // Send settings to the server
+            $.ajax({
+                url: "api/setting",
+                method: "POST",
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'text/plain'
+                },
+                'type': 'POST',
+                'dataType': 'text/plain',
+                data: JSON.stringify(settings),
+                success: function (result) {
+                    // Refresh and locate
+                    this.querySettings();
+                    vm.ivalue(settings.key);
+                }
+            });
+        }
+
+        // Event fired when setting input control is changed; based on the entered value the setting buttons are enabled or disabled
+        settingInputUpdate(event) {
+            /* enable buttons if settings entered value alows that */
+            $('#settings button.btn-save').attr('disabled', event.target.value.length === 0);
+            $('#settings button.btn-restore').attr('disabled', -1 === vm.settings().findIndex(setting => setting.key === event.target.value));
+        }
+
+        // Initialize the settings html controls
+        init() {
+            /* Settings' input initialization event listener */
+            $('#settings button').attr('disabled', true);
+            const settingsInput = document.querySelector('#settings input');
+            settingsInput.addEventListener('input', this.settingInputUpdate);
+
+            /* Button save event listener */
+            const btnSave = document.querySelector('#settings button.button.btn-save');
+            btnSave.addEventListener('click', this.settingSave.bind(this));
+
+            /* Button restore event listener */
+            const btnRestore = document.querySelector('#settings button.button.btn-restore');
+            btnRestore.addEventListener('click', this.settingRestore.bind(this));
+
+            // Query for settings
+            this.querySettings();
+        }
+    };
+
+    /* Datalist binding handler */
     ko.bindingHandlers.datalist = (function () {
         function getVal(rawItem, prop) {
             var item = ko.unwrap(rawItem);
@@ -285,7 +341,10 @@
         };
     })();
 
-    /* initilization when document is ready */
+    // Instantiate UserSettingsManager
+    const usrSettingsManager = new UserSettingManager('#myDataTable');
+
+    /* Initilization, when document is ready */
     $(document).ready(function () {
         const table = $('#myDataTable').DataTable({
             "processing": true,
@@ -331,14 +390,7 @@
             $('div.dataTables_paginate a.paginate_button').css({ "padding": "5px 10px" });
         });
 
-        /* Query for settings */
-        $.ajax({
-            url: "api/settings", success: function (result) {
-                vm.settings(result);
-            }
-        });
-
-        /* apply knockout bindings */
+        /* Apply knockout bindings */
         ko.applyBindings(vm);
     });
 
