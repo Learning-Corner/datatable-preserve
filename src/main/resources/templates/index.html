@@ -48,14 +48,12 @@
     <script type="text/javascript"
             src="../static/js/searchPanes.dataTables.js"
             th:src="@{../js/searchPanes.dataTables.js}"></script>
+    <script type="text/javascript"
+            src="../static/js/knockout.js"
+            th:src="@{../js/knockout.js}"></script>
 
     <title>DataTable Settings Preserver</title>
     <style>
-        /*
-        * {
-            box-sizing: border-box;
-        }
-        */
         body {
             font-family: Arial, Helvetica, sans-serif
         }
@@ -66,41 +64,103 @@
             text-align: center;
         }
 
+        .clear {
+            clear: both;
+        }
+
+        #settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: larger;
+            border-top: 1px solid #111;
+            margin-top: 3px;
+            padding-top: 5px;
+        }
+
+        #settings * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #settings datalist,
+        #settings input,
+        #settings input[list] {
+            width: auto;
+            padding: 3px 5px;
+        }
+
+        #settings .button {
+            padding: 3px 5px;
+            width: 77px;
+        }
+
     </style>
 </head>
 
 <body>
-    <h1>Welcome to The DataTable Settings Preserver</h1>
 
-    <table id="myDataTable"
-           class="display"
-           style="width:100%">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
-                <th scope="col">E-mail</th>
-                <th scope="col">Date of Birth</th>
-                <th scope="col">Personal Number</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-        <tfoot>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
-                <th scope="col">E-mail</th>
-                <th scope="col">Date of Birth</th>
-                <th scope="col">Personal Number</th>
-            </tr>
-        </tfoot>
-    </table>
+    <head>
+        <h1>Welcome to The DataTable Settings Preserver</h1>
+    </head>
+
+    <section id="settings">
+        <div>
+            <p>
+                Settings:
+                <input list="setting"
+                       data-bind="datalist: {
+                    options: settings, 
+                    optionsValue: 'key', 
+                    optionsText: 'key', 
+                    value: selectedKey,
+                    inputValue: ivalue
+
+                }" />
+                <button class="button btn-save">Save</button>
+                <button class="button btn-restore">Restore</button>
+            </p>
+        </div>
+    </section>
+
+    <section id="table">
+        <table id="myDataTable"
+               class="display"
+               style="width:100%">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Date of Birth</th>
+                    <th scope="col">Personal Number</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Date of Birth</th>
+                    <th scope="col">Personal Number</th>
+                </tr>
+            </tfoot>
+        </table>
+    </section>
+
 </body>
 
 <script>
+    const vm = {
+        settings: ko.observableArray([]),
+        selectedKey: ko.observable(),
+        ivalue: ko.observable()
+    };
+
     $(document).ready(function () {
         const table = $('#myDataTable').DataTable({
             "processing": true,
@@ -133,25 +193,151 @@
             colReorder: {
                 enable: true
             },
-            dom: '<"top"fl>Brt<"bottom"ip><"clear">',
+            dom: 'B<"clear"><"top"fl>rt<"bottom"ip><"clear">',
             buttons: [
                 'colvis',
             ]
         });
 
-        table.buttons().container()
-            .insertBefore('#myDataTable_filter');
-
         /* DataTable styling */
-        $('div.dt-buttons').css({ "float": "none", "margin-bottom": "5px" });
+        $('div.dt-buttons').css({ "margin-bottom": "5px" });
         $('div.dt-buttons button').css({ "padding": "1px 5px" });
-
         table.on('draw', function () {
             $('div.dataTables_paginate a.paginate_button').css({ "padding": "5px 10px" });
         });
+
+        /* Query for settings */
+        $.ajax({
+            url: "api/settings", success: function (result) {
+                vm.settings(result);
+            }
+        });
+
+        /* apply knockout bindings */
+        ko.applyBindings(vm);
     });
 
+    function getTableSettings() {
+        let table = $('#myDataTable').DataTable();
+        if (table) {
+            let settings = {
+                page: table.page(),
+                order: table.order(),
+                columns: table.columns()[0].map(c => { return { index: c, visible: table.columns(c).visible()[0] } }),
+                columnsOrder: table.colReorder.order(),
+                search: table.search()
+            }
+            return settings;
+        }
+    }
 
+    /* ==============================================*/
+    /* Settings' input initialization event listener */
+    $('#settings button').attr('disabled', true);
+    const settingsInput = document.querySelector('#settings input');
+    settingsInput.addEventListener('input', onSettingsUpdateValue);
+    function onSettingsUpdateValue(event) {
+        $('#settings button.btn-save').attr('disabled', event.target.value.length === 0);
+        $('#settings button.btn-restore').attr('disabled', -1 === vm.settings().findIndex(setting => setting.key === event.target.value));
+    }
+
+    /* ==============================================*/
+    /* Settings buttons' event listeners */
+    btnSave = document.querySelector('#settings button.button.btn-save');
+    btnSave.addEventListener('click', onSettingsSave);
+    /* saving settings */
+    function onSettingsSave() {
+        const settings = {
+            key: vm.ivalue(),
+            settings: getTableSettings()
+        };
+        console.log(`Saving settings:`, settings);
+    }
+    /* restoring settings */
+    btnRestore = document.querySelector('#settings button.button.btn-restore');
+    btnRestore.addEventListener('click', onSettingsRestore);
+    function onSettingsRestore() {
+        console.log(`Restoring settings: key="${vm.ivalue()}"`);
+    }
+
+    /* datalist binding handler */
+    ko.bindingHandlers.datalist = (function () {
+        function getVal(rawItem, prop) {
+            var item = ko.unwrap(rawItem);
+            return item && prop ? ko.unwrap(item[prop]) : item;
+        }
+
+        function findItem(options, prop, ref) {
+            return ko.utils.arrayFirst(options, function (item) {
+                return ref === getVal(item, prop);
+            });
+        }
+        return {
+            init: function (element, valueAccessor, allBindingsAccessor) {
+                var setup = valueAccessor(),
+                    textProperty = ko.unwrap(setup.optionsText),
+                    valueProperty = ko.unwrap(setup.optionsValue),
+                    dataItems = ko.unwrap(setup.options),
+                    myInputValue = setup.inputValue,
+                    myValue = setup.value,
+                    koValue = allBindingsAccessor().value,
+                    datalist = document.createElement("DATALIST");
+
+                // create an associated <datalist> element
+                datalist.id = element.getAttribute("list");
+                document.body.appendChild(datalist);
+
+                // when the value is changed, write to the associated myValue observable
+                function onNewValue(newVal) {
+                    var dataItems = ko.unwrap(setup.options),
+                        selectedItem = findItem(dataItems, textProperty, newVal)
+                        ,
+                        newInputValueProperty = newVal,
+                        newValue = selectedItem ? getVal(selectedItem, valueProperty) : void 0;
+
+                    if (ko.isWriteableObservable(myValue)) {
+                        myValue(newValue);
+                    }
+                    if (ko.isWriteableObservable(myInputValue)) {
+                        myInputValue(newInputValueProperty);
+                    }
+                }
+
+                // listen for value changes
+                // - either via KO's value binding (preferred) or the change event
+                if (ko.isSubscribable(koValue)) {
+                    koValue.subscribe(onNewValue);
+                } else {
+                    ko.utils.registerEventHandler(element, "change", function () {
+                        onNewValue(this.value);
+                    });
+                }
+
+                // init the element's value
+                // - either via the myValue observable (preferred) or KO's value binding
+                if (ko.isObservable(myValue) && myValue()) {
+                    element.value = getVal(findItem(dataItems, valueProperty, myValue()), textProperty);
+                } else if (ko.isObservable(koValue) && koValue()) {
+                    onNewValue(koValue());
+                }
+            },
+            update: function (element, valueAccessor) {
+                var setup = valueAccessor(),
+                    datalist = element.list,
+                    dataItems = ko.unwrap(setup.options),
+                    textProperty = ko.unwrap(setup.optionsText);
+
+                // rebuild list of options when an underlying observable changes
+                datalist.innerHTML = "";
+                ko.utils.arrayForEach(dataItems, function (item) {
+                    var option = document.createElement("OPTION");
+                    option.value = getVal(item, textProperty);
+                    datalist.appendChild(option);
+                });
+                ko.utils.triggerEvent(element, "change");
+            }
+        };
+    })();
 </script>
 
 </html>
