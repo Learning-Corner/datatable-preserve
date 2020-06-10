@@ -5,6 +5,7 @@ import com.example.datatablepreserv.domain.UserSetting;
 import com.example.datatablepreserv.repos.UserRepository;
 import com.example.datatablepreserv.repos.UserSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,7 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public Iterable<UserSetting> getAllSettings() {
-        return this.userSettingsRepository.findAll();
+        return this.userSettingsRepository.findAll(Sort.by("key").ascending());
     }
 
     @Override

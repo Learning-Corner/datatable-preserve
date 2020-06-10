@@ -26,7 +26,6 @@ public class UserSetting {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "key")
     private String key;
 

@@ -3,6 +3,9 @@ package com.example.datatablepreserv.controllers;
 import com.example.datatablepreserv.domain.User;
 import com.example.datatablepreserv.domain.UserSetting;
 import com.example.datatablepreserv.service.DataService;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +33,15 @@ public class Api {
         return this.dataService.getSettingsOfUserByKey(key);
     }
 
-    @PostMapping("setting")
-    void saveSettings(UserSetting setting){
-        this.dataService.saveSettingsOfUser(setting);
+    @PostMapping(value = "setting", consumes = "text/plain")
+    void saveSettings(@RequestBody String payload) throws ParseException {
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(payload);
+        UserSetting userSetting = UserSetting.builder()
+                .key((String)jsonObject.get("key"))
+                .settings(jsonObject.get("settings").toString())
+                .build();
+        this.dataService.saveSettingsOfUser(userSetting);
     }
 
     @GetMapping("settings")
