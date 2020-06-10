@@ -24,15 +24,9 @@ public class Api {
         return this.dataService.findAllUsers();
     }
 
-    @PostMapping("user")
-    @ResponseBody
-    User saveUser(User user) {
-        return this.dataService.saveUser(user);
-    }
-
     @RequestMapping("settings/{key}")
     @ResponseBody
-    UserSetting getSettingsOfUserByUserId(@PathVariable String key) {
+    UserSetting getSettingsOfUserBySettingsKey(@PathVariable String key) {
         return this.dataService.getSettingsOfUserByKey(key);
     }
 
