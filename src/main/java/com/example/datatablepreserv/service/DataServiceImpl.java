@@ -35,6 +35,11 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
+    public Iterable<UserSetting> getAllSettings() {
+        return this.userSettingsRepository.findAll();
+    }
+
+    @Override
     public void saveSettingsOfUser(UserSetting setting) {
         userSettingsRepository.save(setting);
     }

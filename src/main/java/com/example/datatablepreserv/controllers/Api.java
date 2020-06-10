@@ -41,4 +41,10 @@ public class Api {
         this.dataService.saveSettingsOfUser(setting);
     }
 
+    @GetMapping("settings")
+    @ResponseBody
+    Iterable<UserSetting> getSettings() {
+        return this.dataService.getAllSettings();
+    }
+
 }

@@ -26,6 +26,12 @@ public interface DataService {
     UserSetting getSettingsOfUserByKey(String key);
 
     /**
+     * Get all settings
+     * @return Iterable of settings
+     */
+    Iterable<UserSetting> getAllSettings();
+
+    /**
      * Persists user's settings
      * @param setting user's setting to be persisted
      */
