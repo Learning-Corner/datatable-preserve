@@ -207,6 +207,27 @@
         // Restores setting data; this method is bound to the settings restore button
         settingRestore() {
             console.log(`Restoring settings: key="${vm.ivalue()}"`);
+            const selectedSetting = vm.settings().filter(s => s.key === vm.ivalue());
+            console.log(`Selected setting: `, selectedSetting);
+            if (selectedSetting && (this.dataTable || this.getTable())) {
+                const settings = JSON.parse(selectedSetting[0].settings);
+                // restore columns visibility
+                settings.columns.forEach(c => {
+                    const column = this.dataTable.columns(c.index);
+                    column.visible(c.visible);
+                });
+                // restore column order
+                this.dataTable.colReorder = settings.columnsOrder;
+                // restore data order
+                this.dataTable.order(settings.order);
+                // restore search
+                this.dataTable.search(settings.search);
+                // restore page
+                this.dataTable.page(settings.page);
+
+                // redraw
+                this.dataTable.draw('page');
+            }
         }
 
         // Stores setting data (ajax post to the server); this method is bound to the settings' save button
