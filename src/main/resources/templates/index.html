@@ -224,13 +224,13 @@
                     'Accept': 'text/plain, application/json',
                     'Content-Type': 'text/plain'
                 },
-                'type': 'POST',
-                'dataType': 'application/json',
+                type: 'POST',
+                dataType: 'json',
                 data: JSON.stringify(settings),
                 success: function (result) {
-                    console.log(`settingSave() callback`);
+                    console.log(`settingSave() callback, processing results: `, result);
                     // Refresh and locate
-                    vm.settings(JSON.parse(result))
+                    vm.settings(result)
                     vm.ivalue(settings.key);
                 }
             });
