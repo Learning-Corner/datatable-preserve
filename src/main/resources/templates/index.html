@@ -199,7 +199,7 @@
         querySettings() {
             $.ajax({
                 url: "api/settings", success: function (result) {
-                    vm.settings(result);
+                    vm.settings(result.data);
                 }
             });
         }
@@ -221,15 +221,16 @@
                 url: "api/setting",
                 method: "POST",
                 headers: {
-                    'Accept': 'text/plain',
+                    'Accept': 'text/plain, application/json',
                     'Content-Type': 'text/plain'
                 },
                 'type': 'POST',
-                'dataType': 'text/plain',
+                'dataType': 'application/json',
                 data: JSON.stringify(settings),
                 success: function (result) {
+                    console.log(`settingSave() callback`);
                     // Refresh and locate
-                    this.querySettings();
+                    vm.settings(JSON.parse(result))
                     vm.ivalue(settings.key);
                 }
             });
@@ -356,6 +357,8 @@
                     }
                     return json.data;
                 },
+                /*
+                // this processing is not neede when retrieving AjaxResult in which data is returned in the field with the name "data"
                 dataFilter: function (data) {
                     let json = {};
                     json.data = jQuery.parseJSON(data);
@@ -365,6 +368,7 @@
                     result = JSON.stringify(json); // return JSON string
                     return result;
                 }
+                */
             },
             columns: [
                 { "data": "id" },
