@@ -219,7 +219,7 @@
                 // restore column order
                 this.dataTable.colReorder.order(settings.columnsOrder, true);
                 // restore data order
-                this.dataTable.order(settings.order);
+                this.dataTable.order(settings.order).draw();
                 // restore search
                 this.dataTable.search(settings.search);
                 // restore page
