@@ -217,7 +217,7 @@
                     column.visible(c.visible);
                 });
                 // restore column order
-                this.dataTable.colReorder = settings.columnsOrder;
+                this.dataTable.colReorder.order(settings.columnsOrder, true);
                 // restore data order
                 this.dataTable.order(settings.order);
                 // restore search
