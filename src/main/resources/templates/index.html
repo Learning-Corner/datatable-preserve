@@ -185,6 +185,7 @@
             if (this.dataTable || this.getTable()) {
                 let settings = {
                     page: this.dataTable.page(),
+                    pageLen: this.dataTable.page.len(),
                     order: this.dataTable.order(),
                     columns: this.dataTable.columns()[0].map(c => { return { index: c, visible: this.dataTable.columns(c).visible()[0] } }),
                     columnsOrder: this.dataTable.colReorder.order(),
@@ -216,6 +217,8 @@
                     const column = this.dataTable.columns(c.index);
                     column.visible(c.visible);
                 });
+                // restore page len; default 10
+                this.dataTable.page.len(settings.pageLen || 10);
                 // restore column order
                 this.dataTable.colReorder.order(settings.columnsOrder, true);
                 // restore data order
